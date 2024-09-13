@@ -48,17 +48,19 @@ function renderWidget(weatherJson) {
     const weatherWind = document.getElementById("weather-wind");
     const weatherHumid = document.getElementById("weather-humidity");
     const weatherVisibility = document.getElementById("weather-visibility");
+    const weatherIcon = document.getElementById("weather-icon")
 
-    weather.textContent = weatherJson.days[0].conditions;
+    weather.textContent = weatherJson.currentConditions.conditions;
     weatherLocation.textContent = weatherJson.resolvedAddress;
     weatherDate.textContent = new Date(weatherJson.days[0].datetime).toDateString();
-    weatherTemperature.textContent = weatherJson.days[0].temp + "°";
+    weatherTemperature.textContent = weatherJson.currentConditions.temp + "°";
     weatherTempMin.textContent = weatherJson.days[0].tempmin + "°C";
     weatherTempmax.textContent = weatherJson.days[0].tempmax + "°C";
-    weatherWind.textContent = weatherJson.days[0].windspeed + "k/h";
-    weatherHumid.textContent = weatherJson.days[0].humidity + "%";
-    weatherVisibility.textContent = weatherJson.days[0].visibility + "km";
-}
+    weatherWind.textContent = weatherJson.currentConditions.windspeed + "k/h";
+    weatherHumid.textContent = weatherJson.currentConditions.humidity + "%";
+    weatherVisibility.textContent = weatherJson.currentConditions.visibility + "km";
+    weatherIcon.innerHTML = `<img src="./svg/${weatherJson.currentConditions.icon}.svg" alt="My Happy SVG"/>`;
+}  
 
 async function search(value) {
     try {
