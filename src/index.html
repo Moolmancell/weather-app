@@ -4,11 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="./output.css" rel="stylesheet">
+  <script src="./index.js" defer></script>
   <title>Weather App</title>
 </head>
 <body class="m-10">
   
-<form class="max-w-md mx-auto">   
+<form id="search-form" class="max-w-md mx-auto">   
     <label for="default-search" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
     <div class="relative">
         <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -21,40 +22,53 @@
     </div>
 </form>
 
+<div role="status" id="loading-icon" class="relative left-2/4 top-10 hidden">
+    <svg aria-hidden="true" class="w-8 h-8 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+        <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+    </svg>
+    <span class="sr-only">Loading...</span>
+</div>
+
+<div id="error-message" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mt-5 hidden" role="alert">
+    <strong class="font-bold">Holy smokes!</strong>
+    <span class="block sm:inline">Something seriously bad happened.</span>
+  </div>
+
 <!-- component -->
-<div class="flex items-center justify-center ">
-    <div class="flex flex-col bg-gray-50 border border-gray-300 rounded p-4 w-full max-w-xs m-40">
-                            <div class="font-bold text-xl">Sydney</div>
-                            <div class="text-sm text-gray-500">Thursday 10 May 2020</div>
+<div id="weather-widget" class="hidden items-center justify-center ">
+    <div class="flex flex-col bg-gray-50 border border-gray-300 rounded p-4 w-full max-w-xs mt-40 mx-auto">
+                            <div id="weather-location" class="font-bold text-xl">Sydney</div>
+                            <div id="weather-date" class="text-sm text-gray-500">Thursday 10 May 2020</div>
                             <div class="mt-6 text-6xl self-center inline-flex items-center justify-center rounded-lg text-indigo-400 h-24 w-24">
     <svg class="w-32 h-32" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"></path></svg>
                             </div>
                             <div class="flex flex-row items-center justify-center mt-6">
-                                <div class="font-medium text-6xl">24°</div>
+                                <div id="weather-temperature" class="font-medium text-6xl">24°</div>
                                 <div class="flex flex-col items-center ml-6">
-                                    <div>Cloudy</div>
+                                    <div id="weather-status">Cloudy</div>
                                     <div class="mt-1">
                                         <span class="text-sm"><i class="far fa-long-arrow-up"></i></span>
-                                        <span class="text-sm font-light text-gray-500">28°C</span>
+                                        <span id="weather-tempmin" class="text-sm font-light text-gray-500">28°C</span>
                                     </div>
                                     <div>
                                         <span class="text-sm"><i class="far fa-long-arrow-down"></i></span>
-                                        <span class="text-sm font-light text-gray-500">20°C</span>
+                                        <span id="weather-tempmax" class="text-sm font-light text-gray-500">20°C</span>
                                     </div>
                                 </div>
                             </div>
                             <div class="flex flex-row justify-between mt-6">
                                 <div class="flex flex-col items-center">
                                     <div class="font-medium text-sm">Wind</div>
-                                    <div class="text-sm text-gray-500">9k/h</div>
+                                    <div id="weather-wind" class="text-sm text-gray-500">9k/h</div>
                                 </div>
                                 <div class="flex flex-col items-center">
                                     <div class="font-medium text-sm">Humidity</div>
-                                    <div class="text-sm text-gray-500">68%</div>
+                                    <div id="weather-humidity" class="text-sm text-gray-500">68%</div>
                                 </div>
                                 <div class="flex flex-col items-center">
                                     <div class="font-medium text-sm">Visibility</div>
-                                    <div class="text-sm text-gray-500">10km</div>
+                                    <div id="weather-visibility" class="text-sm text-gray-500">10km</div>
                                 </div>
                             </div>
                         </div>
